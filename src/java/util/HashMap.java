@@ -458,10 +458,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Constructs an empty <tt>HashMap</tt> with the specified initial
-     * capacity and the default load factor (0.75).
+     * capacity and the default load factor (0.75). 构造一个空的 HashMap ，它具有指定的初始容量和默认的负载系数（0.75）。
      *
-     * @param  initialCapacity the initial capacity.
-     * @throws IllegalArgumentException if the initial capacity is negative.
+     * @param  initialCapacity the initial capacity. 初始容量。
+     * @throws IllegalArgumentException if the initial capacity is negative. 如果初始容量为负。
      */
     public HashMap(int initialCapacity) {
         this(initialCapacity, DEFAULT_LOAD_FACTOR);
@@ -472,7 +472,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * (16) and the default load factor (0.75).
      */
     public HashMap() {
-        this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+        this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted 所有其他字段均默认
     }
 
     /**
@@ -637,13 +637,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value); //如果是 树节点，调用 树节点版本的 putTreeVal 添加数据
             else {
                 for (int binCount = 0; ; ++binCount) {
-                    if ((e = p.next) == null) { //如果下一个节点为空，创建节点
+                    if ((e = p.next) == null) { //如果 链表 下一个节点为空，创建节点
                         p.next = newNode(hash, key, value, null);//创建节点
-                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st   binCount阈值 如果大于阈值.tab 会转化为树
-                            treeifyBin(tab, hash);
+                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st   //判断链表的长度是否达到转化红黑树的临界值，临界值为8
+                            treeifyBin(tab, hash); //链表结构转树形结构【需要链表长度为8，并且哈希表的容量大于64】
                         break;
                     }
-                    if (e.hash == hash && //如果下一个节点,不为空,判断下一个节点是否 hash和 key 相同
+                    if (e.hash == hash && //如果 链表 下一个节点,不为空,判断下一个节点是否 hash和 key 相同
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
                     p = e;
@@ -658,9 +658,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
-        if (++size > threshold) //如果当前元素 已经超过了 临界值，就扩容
+        if (++size > threshold) //  实际大小 大于 阈值则扩容
             resize();
-        afterNodeInsertion(evict);
+        afterNodeInsertion(evict); // 插入后回调
         return null;
     }
 
