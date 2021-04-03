@@ -670,48 +670,48 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Otherwise, because we are using power-of-two expansion, the
      * elements from each bin must either stay at same index, or move
      * with a power of two offset in the new table.
-     *
+     * 初始化或增加表大小。如果为空，则根据字段阈值中保持的初始容量目标分配*。  否则，因为我们使用的是2的幂，所以每个bin中的 元素必须保持相同的索引，或者在新表中以2的偏移量移动
      * @return the table
      */
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
-        int oldCap = (oldTab == null) ? 0 : oldTab.length;
-        int oldThr = threshold;
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;// 数组长度
+        int oldThr = threshold; // 临界值
         int newCap, newThr = 0;
-        if (oldCap > 0) {
-            if (oldCap >= MAXIMUM_CAPACITY) {
-                threshold = Integer.MAX_VALUE;
+        if (oldCap > 0) { // 扩容
+            if (oldCap >= MAXIMUM_CAPACITY) {  // 原数组长度大于最大容量(1073741824) 则将threshold设为Integer.MAX_VALUE=2147483647
+                threshold = Integer.MAX_VALUE; // 接近MAXIMUM_CAPACITY的两倍
                 return oldTab;
             }
-            else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+            else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && // 新数组长度 是原来的2倍，
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
-                newThr = oldThr << 1; // double threshold
+                newThr = oldThr << 1; // double threshold  // 临界值也扩大为原来2倍
         }
-        else if (oldThr > 0) // initial capacity was placed in threshold 初始容量已设置为阈值
-            newCap = oldThr;
-        else {               // zero initial threshold signifies using defaults
-            newCap = DEFAULT_INITIAL_CAPACITY;
-            newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+        else if (oldThr > 0) // initial capacity was placed in threshold 初始容量已设置为阈值  // 如果原来的thredshold大于0则将容量设为原来的thredshold
+            newCap = oldThr; // 在第一次带参数初始化时候会有这种情况
+        else {               // zero initial threshold signifies using defaults // 在默认无参数初始化会有这种情况
+            newCap = DEFAULT_INITIAL_CAPACITY; // 16
+            newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY); // 0.75*16=12
         }
-        if (newThr == 0) {
-            float ft = (float)newCap * loadFactor;
+        if (newThr == 0) { // 如果新 的容量 ==0
+            float ft = (float)newCap * loadFactor; // loadFactor 哈希加载因子 默认0.75,可在初始化时传入,16*0.75=12 可以放12个键值对
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
                       (int)ft : Integer.MAX_VALUE);
         }
-        threshold = newThr;
+        threshold = newThr; // 将临界值设置为新临界值
         @SuppressWarnings({"rawtypes","unchecked"})
-            Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+            Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap]; // 扩容
         table = newTab;
-        if (oldTab != null) {
-            for (int j = 0; j < oldCap; ++j) {
+        if (oldTab != null) { // 如果原来的table有数据，则将数据复制到新的table中
+            for (int j = 0; j < oldCap; ++j) { // 根据容量进行循环整个数组，将非空元素进行复制
                 Node<K,V> e;
-                if ((e = oldTab[j]) != null) {
+                if ((e = oldTab[j]) != null) { // 获取数组的第j个元素
                     oldTab[j] = null;
-                    if (e.next == null)
-                        newTab[e.hash & (newCap - 1)] = e;
+                    if (e.next == null) // 如果链表只有一个，则进行直接赋值
+                        newTab[e.hash & (newCap - 1)] = e; // e.hash & (newCap - 1) 确定元素存放位置
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
-                    else { // preserve order
+                    else { // preserve order // 进行链表复制
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
@@ -1903,39 +1903,39 @@ public class HashMap<K,V> extends AbstractMap<K,V>
          * @return root of tree
          */
         final void treeify(Node<K,V>[] tab) {
-            TreeNode<K,V> root = null;
-            for (TreeNode<K,V> x = this, next; x != null; x = next) {
-                next = (TreeNode<K,V>)x.next;
-                x.left = x.right = null;
-                if (root == null) {
-                    x.parent = null;
-                    x.red = false;
-                    root = x;
+            TreeNode<K,V> root = null; // 定义树的根节点
+            for (TreeNode<K,V> x = this, next; x != null; x = next) { // 遍历链表，x指向当前节点、next指向下一个节点
+                next = (TreeNode<K,V>)x.next;  // 下一个节点
+                x.left = x.right = null; // 设置当前节点的左右节点为空
+                if (root == null) { // 如果还没有根节点
+                    x.parent = null; // 当前节点的父节点设为空
+                    x.red = false; // 当前节点的红色属性设为false（把当前节点设为黑色）
+                    root = x; // 根节点指向到当前节点
                 }
-                else {
-                    K k = x.key;
-                    int h = x.hash;
-                    Class<?> kc = null;
-                    for (TreeNode<K,V> p = root;;) {
-                        int dir, ph;
-                        K pk = p.key;
-                        if ((ph = p.hash) > h)
-                            dir = -1;
+                else { // 如果已经存在根节点了
+                    K k = x.key; // 取得当前链表节点的key
+                    int h = x.hash; // 取得当前链表节点的hash值
+                    Class<?> kc = null; // 定义key所属的Class
+                    for (TreeNode<K,V> p = root;;) { // 从根节点开始遍历，此遍历没有设置边界，只能从内部跳出
+                        int dir, ph; // dir 标识方向（左右）、ph标识当前树节点的hash值
+                        K pk = p.key; // 当前树节点的key
+                        if ((ph = p.hash) > h) // 如果当前树节点hash值 大于 当前链表节点的hash值
+                            dir = -1; // 标识当前链表节点会放到当前树节点的左侧
                         else if (ph < h)
-                            dir = 1;
-                        else if ((kc == null &&
-                                  (kc = comparableClassFor(k)) == null) ||
-                                 (dir = compareComparables(kc, k, pk)) == 0)
+                            dir = 1; // 右侧
+                        else if ((kc == null && // 如果两个节点的key的hash值相等，那么还要通过其他方式再进行比较
+                                  (kc = comparableClassFor(k)) == null) || //如果当前链表节点的key实现了comparable接口，并且当前树节点和链表节点是相同Class的实例，那么通过comparable的方式再比较两者。
+                                 (dir = compareComparables(kc, k, pk)) == 0) // 如果还是相等，最后再通过tieBreakOrder比较一次
                             dir = tieBreakOrder(k, pk);
 
-                        TreeNode<K,V> xp = p;
-                        if ((p = (dir <= 0) ? p.left : p.right) == null) {
-                            x.parent = xp;
+                        TreeNode<K,V> xp = p; // 保存当前树节点
+                        if ((p = (dir <= 0) ? p.left : p.right) == null) { //如果dir 小于等于0 ： 当前链表节点一定放置在当前树节点的左侧，但不一定是该树节点的左孩子，也可能是左孩子的右孩子 或者 更深层次的节点。如果dir 大于0 ： 当前链表节点一定放置在当前树节点的右侧，但不一定是该树节点的右孩子，也可能是右孩子的左孩子 或者 更深层次的节点。 如果当前树节点不是叶子节点，那么最终会以当前树节点的左孩子或者右孩子 为 起始节点  再从GOTO1 处开始 重新寻找自己（当前链表节点）的位置 如果当前树节点就是叶子节点，那么根据dir的值，就可以把当前链表节点挂载到当前树节点的左或者右侧了。挂载之后，还需要重新把树进行平衡。平衡之后，就可以针对下一个链表节点进行处理了。
+                            x.parent = xp; // 当前链表节点 作为 当前树节点的子节点
                             if (dir <= 0)
-                                xp.left = x;
+                                xp.left = x;  // 作为左孩子
                             else
-                                xp.right = x;
-                            root = balanceInsertion(root, x);
+                                xp.right = x; // 作为右孩子
+                            root = balanceInsertion(root, x); // 重新平衡
                             break;
                         }
                     }

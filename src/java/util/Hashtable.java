@@ -383,7 +383,7 @@ public class Hashtable<K,V>
      * hashtable, in order to accommodate and access its entries more
      * efficiently.  This method is called automatically when the
      * number of keys in the hashtable exceeds this hashtable's capacity
-     * and load factor.
+     * and load factor.  增加此哈希表的容量并在内部进行重组，以便更有效地容纳和访问其条目。当哈希表中的键数超过该哈希表的容量和负载因子时，将自动调用此方法。
      */
     @SuppressWarnings("unchecked")
     protected void rehash() {
@@ -461,7 +461,7 @@ public class Hashtable<K,V>
 
         // Makes sure the key is not already in the hashtable.
         Entry<?,?> tab[] = table;
-        int hash = key.hashCode();
+        int hash = key.hashCode();//获取key 的 hashCode
         int index = (hash & 0x7FFFFFFF) % tab.length;
         @SuppressWarnings("unchecked")
         Entry<K,V> entry = (Entry<K,V>)tab[index];
