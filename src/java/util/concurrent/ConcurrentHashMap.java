@@ -807,7 +807,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     /**
      * Table of counter cells. When non-null, size is a power of 2.
      */
-    private transient volatile CounterCell[] counterCells;
+    private transient volatile CounterCell[] counterCells; // counterCells数组，总数值的分值分别存在每个cell中
 
     // views
     private transient KeySetView<K,V> keySet;
@@ -991,7 +991,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Maps the specified key to the specified value in this table.
-     * Neither the key nor the value can be null.
+     * Neither the key nor the value can be null. 将指定的键映射到此表中的指定值。  键和值都不能为null。
      *
      * <p>The value can be retrieved by calling the {@code get} method
      * with a key that is equal to the original key.
@@ -1000,7 +1000,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * @param value value to be associated with the specified key
      * @return the previous value associated with {@code key}, or
      *         {@code null} if there was no mapping for {@code key}
-     * @throws NullPointerException if the specified key or value is null
+     * @throws NullPointerException if the specified key or value is null 如果指定的键或值为null
      */
     public V put(K key, V value) {
         return putVal(key, value, false);
@@ -1008,45 +1008,45 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
-        if (key == null || value == null) throw new NullPointerException();
-        int hash = spread(key.hashCode());
-        int binCount = 0;
-        for (Node<K,V>[] tab = table;;) {
+        if (key == null || value == null) throw new NullPointerException(); //如果键 或者 值 为空 抛出空指针异常
+        int hash = spread(key.hashCode()); //获取 hash 值
+        int binCount = 0;  // 用于记录相应链表的长度
+        for (Node<K,V>[] tab = table;;) {   //遍历数组
             Node<K,V> f; int n, i, fh;
-            if (tab == null || (n = tab.length) == 0)
+            if (tab == null || (n = tab.length) == 0)  //如果内置的table 为空，或者tab长度为0，重新初始化
                 tab = initTable();
-            else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
+            else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {  //如果数组当前位置为null,用一次 CAS 操作将这个新值放入其中
                 if (casTabAt(tab, i, null,
                              new Node<K,V>(hash, key, value, null)))
                     break;                   // no lock when adding to empty bin
             }
             else if ((fh = f.hash) == MOVED)
                 tab = helpTransfer(tab, f);
-            else {
+            else {   // f是头结点
                 V oldVal = null;
-                synchronized (f) {
+                synchronized (f) {   //加锁
                     if (tabAt(tab, i) == f) {
-                        if (fh >= 0) {
-                            binCount = 1;
-                            for (Node<K,V> e = f;; ++binCount) {
+                        if (fh >= 0) {  //头结点的 hash 值大于 0，说明是链表
+                            binCount = 1;  //链表长度+1
+                            for (Node<K,V> e = f;; ++binCount) {    //遍历链表
                                 K ek;
                                 if (e.hash == hash &&
                                     ((ek = e.key) == key ||
-                                     (ek != null && key.equals(ek)))) {
+                                     (ek != null && key.equals(ek)))) {  // 如果发现了"相等"的 key，判断是否要进行值覆盖
                                     oldVal = e.val;
-                                    if (!onlyIfAbsent)
+                                    if (!onlyIfAbsent) //判断是否要进行值覆盖
                                         e.val = value;
                                     break;
                                 }
                                 Node<K,V> pred = e;
-                                if ((e = e.next) == null) {
+                                if ((e = e.next) == null) {   // 到了链表的最末端，将新值放到链表的最末端
                                     pred.next = new Node<K,V>(hash, key,
                                                               value, null);
                                     break;
                                 }
                             }
                         }
-                        else if (f instanceof TreeBin) {
+                        else if (f instanceof TreeBin) {  //如果是一个红黑树的结构，将新值放到红黑树中
                             Node<K,V> p;
                             binCount = 2;
                             if ((p = ((TreeBin<K,V>)f).putTreeVal(hash, key,
@@ -1059,7 +1059,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                     }
                 }
                 if (binCount != 0) {
-                    if (binCount >= TREEIFY_THRESHOLD)
+                    if (binCount >= TREEIFY_THRESHOLD)  //链表的长度大于8；转换为红黑树
                         treeifyBin(tab, i);
                     if (oldVal != null)
                         return oldVal;
@@ -2248,7 +2248,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * resizing, initiates transfer. If already resizing, helps
      * perform transfer if work is available.  Rechecks occupancy
      * after a transfer to see if another resize is already needed
-     * because resizings are lagging additions.
+     * because resizings are lagging additions. 添加计数，如果表太小并且尚未调整大小，则启动传输。如果已经调整大小，则可以帮助在有工作的情况下执行转移。 转移后重新检查占用率，以查看是否已经需要其他调整大小，因为调整大小是滞后的。
      *
      * @param x the count to add
      * @param check if <0, don't check resize, if <= 1 only check if uncontended
@@ -2259,33 +2259,33 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
             !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
             CounterCell a; long v; int m;
             boolean uncontended = true;
-            if (as == null || (m = as.length - 1) < 0 ||
-                (a = as[ThreadLocalRandom.getProbe() & m]) == null ||
+            if (as == null || (m = as.length - 1) < 0 ||    // 如果计数盒子是空（尚未出现并发）
+                (a = as[ThreadLocalRandom.getProbe() & m]) == null ||   // 如果随机取余一个数组位置为空
                 !(uncontended =
-                  U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
-                fullAddCount(x, uncontended);
+                  U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {  // 或者修改这个槽位的变量失败（出现并发了）
+                fullAddCount(x, uncontended);   // 执行 fullAddCount 方法。并结束
                 return;
             }
             if (check <= 1)
                 return;
             s = sumCount();
         }
-        if (check >= 0) {
+        if (check >= 0) {  // 如果需要检查,检查是否需要扩容，在 putVal 方法调用时，默认就是要检查的。
             Node<K,V>[] tab, nt; int n, sc;
-            while (s >= (long)(sc = sizeCtl) && (tab = table) != null &&
+            while (s >= (long)(sc = sizeCtl) && (tab = table) != null &&   // 如果map.size() 大于 sizeCtl（达到扩容阈值需要扩容） 且table 不是空；且 table 的长度小于 1 << 30。（可以扩容）
                    (n = tab.length) < MAXIMUM_CAPACITY) {
-                int rs = resizeStamp(n);
-                if (sc < 0) {
-                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
-                        sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
-                        transferIndex <= 0)
-                        break;
-                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
-                        transfer(tab, nt);
+                int rs = resizeStamp(n);   // 根据 length 得到一个标识
+                if (sc < 0) {  // 如果正在扩容
+                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||  // 如果 sc 的低 16 位不等于 标识符（校验异常 sizeCtl 变化了）
+                        sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||  // 如果 sc == 标识符 + 1 （扩容结束了，不再有线程进行扩容）（默认第一个线程设置 sc ==rs 左移 16 位 + 2，当第一个线程结束扩容了，就会将 sc 减一。这个时候，sc 就等于 rs + 1）
+                        transferIndex <= 0)   // 如果 sc == 标识符 + 65535（帮助线程数已经达到最大）。如果 nextTable == null（结束扩容了）。如果 transferIndex <= 0 (转移状态变化了)
+                        break; // 结束循环
+                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))    // 如果可以帮助扩容，那么将 sc 加 1. 表示多了一个线程在帮助扩容
+                        transfer(tab, nt);  // 扩容
                 }
-                else if (U.compareAndSwapInt(this, SIZECTL, sc,
+                else if (U.compareAndSwapInt(this, SIZECTL, sc, // 如果不在扩容，将 sc 更新：标识符左移 16 位 然后 + 2. 也就是变成一个负数。高 16 位是标识符，低 16 位初始是
                                              (rs << RESIZE_STAMP_SHIFT) + 2))
-                    transfer(tab, null);
+                    transfer(tab, null);   // 更新 sizeCtl 为负数后，开始扩容。
                 s = sumCount();
             }
         }
@@ -2362,7 +2362,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Moves and/or copies the nodes in each bin to new table. See
-     * above for explanation.
+     * above for explanation. 将每个bin中的节点移动和/或复制到新表中。请参阅上面的以获取解释。
      */
     private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         int n = tab.length, stride;
@@ -2509,7 +2509,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     }
 
     final long sumCount() {
-        CounterCell[] as = counterCells; CounterCell a;
+        CounterCell[] as = counterCells; CounterCell a;//CounterCell数组的每个元素，都存储一个元素个数，而实际我们调用size方法就是通过这个循环累加来得到的
         long sum = baseCount;
         if (as != null) {
             for (int i = 0; i < as.length; ++i) {

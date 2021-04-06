@@ -372,13 +372,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Returns a power of two size for the given target capacity.
+     * Returns a power of two size for the given target capacity. 对于给定的目标容量，返回两倍大小的幂。
      */
     static final int tableSizeFor(int cap) {
-        int n = cap - 1;
-        n |= n >>> 1;
-        n |= n >>> 2;
-        n |= n >>> 4;
+        int n = cap - 1;  //　让cap-1再赋值给n的目的是另找到的目标值大于或等于原值
+        n |= n >>> 1;   //   例如二进制1000，十进制数值为8。如果不对它减1而直接操作，将得到答案10000，即16。
+        n |= n >>> 2;   //显然不是结果。减1后二进制为111，再进行操作则会得到原来的数值1000，即8。
+        n |= n >>> 4; // 通过位运算,把低位都补1
         n |= n >>> 8;
         n |= n >>> 16;
         return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
@@ -436,12 +436,12 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Constructs an empty <tt>HashMap</tt> with the specified initial
-     * capacity and load factor.
+     * capacity and load factor.  构造一个空的 HashMap  ，它具有指定的初始 容量和负载系数。
      *
      * @param  initialCapacity the initial capacity
      * @param  loadFactor      the load factor
      * @throws IllegalArgumentException if the initial capacity is negative
-     *         or the load factor is nonpositive
+     *         or the load factor is nonpositive  如果初始容量为负或负载系数为负
      */
     public HashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0)
@@ -536,7 +536,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Returns the value to which the specified key is mapped,
-     * or {@code null} if this map contains no mapping for the key.
+     * or {@code null} if this map contains no mapping for the key.  返回指定键所映射到的值；如果此映射不包含键的映射关系，则返回 {@code null}。
      *
      * <p>More formally, if this map contains a mapping from a key
      * {@code k} to a value {@code v} such that {@code (key==null ? k==null :
@@ -547,7 +547,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * indicate that the map contains no mapping for the key; it's also
      * possible that the map explicitly maps the key to {@code null}.
      * The {@link #containsKey containsKey} operation may be used to
-     * distinguish these two cases.
+     * distinguish these two cases. 返回值{@code null}不一定<表示该映射不包含该键的映射； 映射也可能显式地将键映射到{@code null}。 {@link #containsKey containsKey}操作可用于区分这两种情况。
      *
      * @see #put(Object, Object)
      */
@@ -775,9 +775,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /**
      * Copies all of the mappings from the specified map to this map.
      * These mappings will replace any mappings that this map had for
-     * any of the keys currently in the specified map.
+     * any of the keys currently in the specified map. 将所有映射从指定映射复制到此映射。  这些映射将替换此映射为 当前指定映射中的任何键所具有的所有映射。
      *
-     * @param m mappings to be stored in this map
+     * @param m mappings to be stored in this map 要存储在此 Map 中的映射
      * @throws NullPointerException if the specified map is null
      */
     public void putAll(Map<? extends K, ? extends V> m) {
@@ -812,20 +812,20 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final Node<K,V> removeNode(int hash, Object key, Object value,
                                boolean matchValue, boolean movable) {
         Node<K,V>[] tab; Node<K,V> p; int n, index;
-        if ((tab = table) != null && (n = tab.length) > 0 &&
-            (p = tab[index = (n - 1) & hash]) != null) {
+        if ((tab = table) != null && (n = tab.length) > 0 && // 如果 节点数组tab不为空、数组长度n大于0、根据hash定位到的节点对象p
+            (p = tab[index = (n - 1) & hash]) != null) { // （该节点为 树的根节点 或 链表的首节点）不为空 需要从该节点p向下遍历，找到那个和key匹配的节点对象
             Node<K,V> node = null, e; K k; V v;
-            if (p.hash == hash &&
+            if (p.hash == hash &&         // 如果当前节点的键和key相等，那么当前节点就是要删除的节点，赋值给node
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 node = p;
-            else if ((e = p.next) != null) {
-                if (p instanceof TreeNode)
+            else if ((e = p.next) != null) { //到这一步说明首节点没有匹配上，那么检查下是否有next节点。如果没有next节点，就说明该节点所在位置上没有发生hash碰撞, 就一个节点并且还没匹配上，也就没得删了，最终也就返回null了。如果存在next节点，就说明该数组位置上发生了hash碰撞，此时可能存在一个链表，也可能是一颗红黑树
+                if (p instanceof TreeNode)    // 如果当前节点是TreeNode类型，说明已经是一个红黑树，那么调用getTreeNode方法从树结构中查找满足条件的节点
                     node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
-                else {
+                else {    // 如果不是树节点，那么就是一个链表，只需要从头到尾逐个节点比对即可
                     do {
                         if (e.hash == hash &&
                             ((k = e.key) == key ||
-                             (key != null && key.equals(k)))) {
+                             (key != null && key.equals(k)))) {  // 如果e节点的键是否和key相等，e节点就是要删除的节点，赋值给node变量，调出循环
                             node = e;
                             break;
                         }
@@ -833,17 +833,17 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     } while ((e = e.next) != null);
                 }
             }
-            if (node != null && (!matchValue || (v = node.value) == value ||
-                                 (value != null && value.equals(v)))) {
-                if (node instanceof TreeNode)
-                    ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);
-                else if (node == p)
-                    tab[index] = node.next;
-                else
+            if (node != null && (!matchValue || (v = node.value) == value || // 如果node不为空，说明根据key匹配到了要删除的节点
+                                 (value != null && value.equals(v)))) { //如果不需要对比value值  或者  需要对比value值但是value值也相等。那么就可以删除该node节点了
+                if (node instanceof TreeNode)  // 如果该节点是个TreeNode对象，说明此节点存在于红黑树结构中，
+                    ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);// 调用removeTreeNode方法（该方法单独解析）移除该节点
+                else if (node == p) // 如果该节点不是TreeNode对象，node == p 的意思是该node节点就是首节点
+                    tab[index] = node.next; // 由于删除的是首节点，那么直接将节点数组对应位置指向到第二个节点即可
+                else // 如果node节点不是首节点，此时p是node的父节点，由于要删除node，所有只需要把p的下一个节点指向到node的下一个节点即可把node从链表中删除了
                     p.next = node.next;
-                ++modCount;
-                --size;
-                afterNodeRemoval(node);
+                ++modCount; // HashMap的修改次数递增
+                --size; // HashMap的元素个数递减
+                afterNodeRemoval(node); // 调用afterNodeRemoval方法，该方法HashMap没有任何实现逻辑，目的是为了让子类根据需要自行覆写
                 return node;
             }
         }
@@ -2011,13 +2011,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /**
-         * Removes the given node, that must be present before this call.
-         * This is messier than typical red-black deletion code because we
-         * cannot swap the contents of an interior node with a leaf
-         * successor that is pinned by "next" pointers that are accessible
-         * independently during traversal. So instead we swap the tree
-         * linkages. If the current tree appears to have too few nodes,
-         * the bin is converted back to a plain bin. (The test triggers
+         * Removes the given node, that must be present before this call. 删除此调用之前必须存在的给定节点。
+         * This is messier than typical red-black deletion code because we 这比典型的红黑删除代码更混乱，
+         * cannot swap the contents of an interior node with a leaf 因为我们 不能交换内部节点的内容，
+         * successor that is pinned by "next" pointers that are accessible 而叶子后继者是由遍历过程中可独立访问的“下一个”指针固定的。
+         * independently during traversal. So instead we swap the tree 因此，我们交换树 链接。
+         * linkages. If the current tree appears to have too few nodes, 如果当前树的节点似乎太少，
+         * the bin is converted back to a plain bin. (The test triggers 则箱将转换回普通箱。 （测试会根据树结构触发. 2到6个节点之间的某个位置）。
          * somewhere between 2 and 6 nodes, depending on tree structure).
          */
         final void removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,
@@ -2040,7 +2040,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 root = root.root();
             if (root == null || root.right == null ||
                 (rl = root.left) == null || rl.left == null) {
-                tab[index] = first.untreeify(map);  // too small
+                tab[index] = first.untreeify(map);  // too small  树的元素太少，转换为链表
                 return;
             }
             TreeNode<K,V> p = this, pl = left, pr = right, replacement;
@@ -2116,9 +2116,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /**
-         * Splits nodes in a tree bin into lower and upper tree bins,
-         * or untreeifies if now too small. Called only from resize;
-         * see above discussion about split bits and indices.
+         * Splits nodes in a tree bin into lower and upper tree bins, 将树箱中的节点拆分为上下树箱，如果现在太小，
+         * or untreeifies if now too small. Called only from resize; 则或取消树化。仅从调整大小调用；
+         * see above discussion about split bits and indices. 请参见上面有关拆分位和索引的讨论。
          *
          * @param map the map
          * @param tab the table for recording bin heads
@@ -2173,7 +2173,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /* ------------------------------------------------------------ */
-        // Red-black tree methods, all adapted from CLR
+        // Red-black tree methods, all adapted from CLR 红黑树 向左旋转 方法，全部改编自CLR
 
         static <K,V> TreeNode<K,V> rotateLeft(TreeNode<K,V> root,
                                               TreeNode<K,V> p) {
