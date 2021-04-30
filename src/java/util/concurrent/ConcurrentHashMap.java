@@ -686,14 +686,14 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Returns a power of two table size for the given desired capacity.
-     * See Hackers Delight, sec 3.2
+     * Returns a power of two table size for the given desired capacity. 对于给定的所需容量，返回两个表大小的幂。
+     * See Hackers Delight, sec 3.2  参见Hackers Delight，第3.2
      */
     private static final int tableSizeFor(int c) {
-        int n = c - 1;
-        n |= n >>> 1;
-        n |= n >>> 2;
-        n |= n >>> 4;
+        int n = c - 1;  //　  让cap-1再赋值给n的目的是另找到的目标值大于或等于原值
+        n |= n >>> 1;   //    例如二进制1000，十进制数值为8。如果不对它减1而直接操作，将得到答案10000，即16。
+        n |= n >>> 2;   //    显然不是结果。减1后二进制为111，再进行操作则会得到原来的数值1000，即8。
+        n |= n >>> 4;   //    通过位运算,把低位都补1
         n |= n >>> 8;
         n |= n >>> 16;
         return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
@@ -823,15 +823,15 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     public ConcurrentHashMap() {
     }
 
-    /**
+    /** 【BUG】此处负载因子为 2/3，非默认负载因子3/4
      * Creates a new, empty map with an initial table size
      * accommodating the specified number of elements without the need
-     * to dynamically resize.
+     * to dynamically resize.  创建一个新的空映射，其初始表大小 可以容纳指定数量的元素，而无需动态调整大小。
      *
      * @param initialCapacity The implementation performs internal
-     * sizing to accommodate this many elements.
+     * sizing to accommodate this many elements. 该实现执行内部调整大小以容纳许多元素。
      * @throws IllegalArgumentException if the initial capacity of
-     * elements is negative
+     * elements is negative 如果元素的初始容量为负 抛出IllegalArgumentException异常
      */
     public ConcurrentHashMap(int initialCapacity) {
         if (initialCapacity < 0)
@@ -2292,7 +2292,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * Helps transfer if a resize is in progress.
+     * Helps transfer if a resize is in progress. 如果正在调整大小，则有助于传输。
      */
     final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
         Node<K,V>[] nextTab; int sc;
@@ -2316,7 +2316,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Tries to presize table to accommodate the given number of elements.
-     *
+     * 尝试调整表的大小以容纳给定数量的元素。
      * @param size number of elements (doesn't need to be perfectly accurate)
      */
     private final void tryPresize(int size) {

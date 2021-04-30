@@ -340,7 +340,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Returns x's Class if it is of the form "class C implements
-     * Comparable<C>", else null.
+     * Comparable<C>", else null. 如果x的形式为“类C实现 Comparable <C>”，则返回x的类，否则返回null。
      */
     static Class<?> comparableClassFor(Object x) {
         if (x instanceof Comparable) {
@@ -614,7 +614,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /**
      * Implements Map.put and related methods
      *
-     * @param hash hash for key
+     * @param hash hash for key 哈希
      * @param key the key
      * @param value the value to put
      * @param onlyIfAbsent if true, don't change existing value 如果为true，请不要更改现有值
@@ -1818,7 +1818,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /**
-         * Ensures that the given root is the first node of its bin.
+         * Ensures that the given root is the first node of its bin. 确保给定的根是其bin的第一个节点。
          */
         static <K,V> void moveRootToFront(Node<K,V>[] tab, TreeNode<K,V> root) {
             int n;
@@ -1881,11 +1881,11 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             return ((parent != null) ? root() : this).find(h, k, null);
         }
 
-        /**
+        /**  打破平局实用程序，用于在 hashCodes相等和不可比时，对插入进行排序.
          * Tie-breaking utility for ordering insertions when equal
-         * hashCodes and non-comparable. We don't require a total
+         * hashCodes and non-comparable. We don't require a total  我们不需要总计顺序，只是要保持一致的插入规则,等值于再平衡
          * order, just a consistent insertion rule to maintain
-         * equivalence across rebalancings. Tie-breaking further than
+         * equivalence across rebalancings. Tie-breaking further than 决胜比 必要的话可以简化测试
          * necessary simplifies testing a bit.
          */
         static int tieBreakOrder(Object a, Object b) {
@@ -1966,45 +1966,45 @@ public class HashMap<K,V> extends AbstractMap<K,V>
          */
         final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,
                                        int h, K k, V v) {
-            Class<?> kc = null;
-            boolean searched = false;
-            TreeNode<K,V> root = (parent != null) ? root() : this;
+            Class<?> kc = null; // key的类型
+            boolean searched = false; //是否搜索过
+            TreeNode<K,V> root = (parent != null) ? root() : this; //获取根节点，有父节点使用 root()方法获取，没有就说明当前节点是根节点
             for (TreeNode<K,V> p = root;;) {
-                int dir, ph; K pk;
-                if ((ph = p.hash) > h)
-                    dir = -1;
-                else if (ph < h)
-                    dir = 1;
-                else if ((pk = p.key) == k || (k != null && k.equals(pk)))
-                    return p;
+                int dir, ph; K pk; // dir:key的compareTo结果[dir控制放到左、右边]. ph:临时节点的hash值,pk:临时节点的key值
+                if ((ph = p.hash) > h) // 需要保存的hash值小于临时节点hash值，说明需要放到左边
+                    dir = -1; // dir 小于0说明当前节点需要放到左边
+                else if (ph < h) // 需要保存的hash值大于临时节点hash值，说明需要放到左边
+                    dir = 1; // dir 大于0说明当前节点需要放到右边
+                else if ((pk = p.key) == k || (k != null && k.equals(pk))) //如果保存的key和临时节点的key相等 ==成立 ，或者equals 成立
+                    return p; // 返回当前节点
                 else if ((kc == null &&
                         (kc = comparableClassFor(k)) == null) ||
-                        (dir = compareComparables(kc, k, pk)) == 0) {
-                    if (!searched) {
+                        (dir = compareComparables(kc, k, pk)) == 0) { //如果key的 class为空，并且compareTo  key和临时key为 0
+                    if (!searched) { //如果未搜索过
                         TreeNode<K,V> q, ch;
-                        searched = true;
-                        if (((ch = p.left) != null &&
-                                (q = ch.find(h, k, kc)) != null) ||
-                                ((ch = p.right) != null &&
-                                        (q = ch.find(h, k, kc)) != null))
-                            return q;
+                        searched = true; //搜索标记 置为 true
+                        if (((ch = p.left) != null && // 临时节点的左节点不为空
+                                (q = ch.find(h, k, kc)) != null) ||  //查找左节点是否有该元素
+                                ((ch = p.right) != null && // 临时节点的右节点不为空
+                                        (q = ch.find(h, k, kc)) != null))   //查找右节点是否有该元素
+                            return q; //元素不为空就返回
                     }
-                    dir = tieBreakOrder(k, pk);
+                    dir = tieBreakOrder(k, pk);// 给一个可用的排序值
                 }
 
                 TreeNode<K,V> xp = p;
-                if ((p = (dir <= 0) ? p.left : p.right) == null) {
-                    Node<K,V> xpn = xp.next;
-                    TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);
-                    if (dir <= 0)
+                if ((p = (dir <= 0) ? p.left : p.right) == null) { //根据dir 进入到 临时节点的子节点
+                    Node<K,V> xpn = xp.next; //获取节点的下一个元素
+                    TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);//创建一个新的树节点
+                    if (dir <= 0) //根据 dir 把新树节点放置到 对应的方向
                         xp.left = x;
                     else
                         xp.right = x;
-                    xp.next = x;
-                    x.parent = x.prev = xp;
-                    if (xpn != null)
-                        ((TreeNode<K,V>)xpn).prev = x;
-                    moveRootToFront(tab, balanceInsertion(root, x));
+                    xp.next = x; // 设置xp的下一个元素为新树节点(把新树节点插入到 xp 和 xpn 中间)
+                    x.parent = x.prev = xp; // 设置新树节点的父节点和上一节点为 xp
+                    if (xpn != null) //如果 xpn 不为空
+                        ((TreeNode<K,V>)xpn).prev = x;  //设置 xpn 上一个元素为 新树节点
+                    moveRootToFront(tab, balanceInsertion(root, x));// balanceInsertion尾插法。 moveRootToFront确保给的root节点是根节点
                     return null;
                 }
             }
@@ -2359,7 +2359,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
 
         /**
-         * Recursive invariant check
+         * Recursive invariant check 递归不变检查
          */
         static <K,V> boolean checkInvariants(TreeNode<K,V> t) {
             TreeNode<K,V> tp = t.parent, tl = t.left, tr = t.right,
