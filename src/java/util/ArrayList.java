@@ -109,7 +109,7 @@ public class ArrayList<E> extends AbstractList<E>
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
-     * Default initial capacity.
+     * Default initial capacity. 初始化容量
      */
     private static final int DEFAULT_CAPACITY = 10;
 
@@ -143,9 +143,9 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Constructs an empty list with the specified initial capacity.
      *
-     * @param  initialCapacity  the initial capacity of the list
+     * @param  initialCapacity  the initial capacity of the list 列表的初始容量
      * @throws IllegalArgumentException if the specified initial capacity
-     *         is negative
+     *         is negative 如果指定的初始容量 为负 抛出  IllegalArgumentException 异常
      */
     public ArrayList(int initialCapacity) {
         if (initialCapacity > 0) {
@@ -203,8 +203,8 @@ public class ArrayList<E> extends AbstractList<E>
      * Increases the capacity of this <tt>ArrayList</tt> instance, if
      * necessary, to ensure that it can hold at least the number of elements
      * specified by the minimum capacity argument.
-     *
-     * @param   minCapacity   the desired minimum capacity
+     * 如有必要，增加此 ArrayList 实例的容量，以确保它至少可以容纳最小容量参数指定的元素数量
+     * @param   minCapacity   the desired minimum capacity 所需的最小容量
      */
     public void ensureCapacity(int minCapacity) {
         int minExpand = (elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
@@ -215,7 +215,7 @@ public class ArrayList<E> extends AbstractList<E>
             : DEFAULT_CAPACITY;
 
         if (minCapacity > minExpand) {
-            ensureExplicitCapacity(minCapacity);
+            ensureExplicitCapacity(minCapacity); //确保明确容量
         }
     }
 
@@ -224,7 +224,7 @@ public class ArrayList<E> extends AbstractList<E>
             minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
         }
 
-        ensureExplicitCapacity(minCapacity);
+        ensureExplicitCapacity(minCapacity); //确保明确的容量
     }
 
     private void ensureExplicitCapacity(int minCapacity) {
@@ -235,7 +235,7 @@ public class ArrayList<E> extends AbstractList<E>
             grow(minCapacity);
     }
 
-    /**
+    /** 要分配的数组的最大大小。 一些虚拟机在数组中保留一些标题字。  尝试分配更大的阵列可能会导致  OutOfMemoryError：请求的阵列大小超出了VM限制
      * The maximum size of array to allocate.
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
@@ -246,18 +246,18 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Increases the capacity to ensure that it can hold at least the
      * number of elements specified by the minimum capacity argument.
-     *
-     * @param minCapacity the desired minimum capacity
+     * 增加容量以确保它至少可以容纳 最小容量参数指定的元素数。
+     * @param minCapacity the desired minimum capacity 所需的最小容量
      */
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
-        if (newCapacity - minCapacity < 0)
+        int newCapacity = oldCapacity + (oldCapacity >> 1);//扩容, 新容量为 旧容量的1.5倍
+        if (newCapacity - minCapacity < 0) //判断 新容量是否 溢出int最大值，如果溢出新容量会小于0
             newCapacity = minCapacity;
-        if (newCapacity - MAX_ARRAY_SIZE > 0)
-            newCapacity = hugeCapacity(minCapacity);
-        // minCapacity is usually close to size, so this is a win:
+        if (newCapacity - MAX_ARRAY_SIZE > 0) // 如果新容量大于 默认的最大容量（ Integer.MAX_VALUE-8）
+            newCapacity = hugeCapacity(minCapacity);// 新容量设置为  Integer.MAX_VALUE
+        // minCapacity is usually close to size, so this is a win: minCapacity通常接近大小，因此这是一个胜利：
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
 
@@ -449,13 +449,13 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * Appends the specified element to the end of this list.
+     * Appends the specified element to the end of this list. 将指定的元素追加到此列表的末尾。
      *
-     * @param e element to be appended to this list
+     * @param e element to be appended to this list 要添加到此列表的元素
      * @return <tt>true</tt> (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
-        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        ensureCapacityInternal(size + 1);  // Increments modCount!! 扩容以及增加modCount
         elementData[size++] = e;
         return true;
     }
@@ -464,41 +464,41 @@ public class ArrayList<E> extends AbstractList<E>
      * Inserts the specified element at the specified position in this
      * list. Shifts the element currently at that position (if any) and
      * any subsequent elements to the right (adds one to their indices).
-     *
+     * 将指定的元素插入此 列表中的指定位置。将当前位于该位置的元素（如果有的话）和 任何后续元素右移（将其索引加一）。
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public void add(int index, E element) {
-        rangeCheckForAdd(index);
+        rangeCheckForAdd(index); //校验 下标是否合理
 
-        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        ensureCapacityInternal(size + 1);  // Increments modCount!! 扩容并 增加 modCount
         System.arraycopy(elementData, index, elementData, index + 1,
-                         size - index);
+                         size - index); //将当前位于该位置的元素（如果有的话）和 任何后续元素右移
         elementData[index] = element;
         size++;
     }
 
     /**
-     * Removes the element at the specified position in this list.
+     * Removes the element at the specified position in this list. 删除列表上指定位置的一个元素
      * Shifts any subsequent elements to the left (subtracts one from their
-     * indices).
+     * indices). 后续元素向左移动一位
      *
-     * @param index the index of the element to be removed
-     * @return the element that was removed from the list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * @param index the index of the element to be removed 要删除的元素的下标
+     * @return the element that was removed from the list 返回删除后的元素
+     * @throws IndexOutOfBoundsException {@inheritDoc} 下标越界异常
      */
     public E remove(int index) {
         rangeCheck(index);
 
         modCount++;
-        E oldValue = elementData(index);
+        E oldValue = elementData(index); // 需要删除的元素
 
-        int numMoved = size - index - 1;
+        int numMoved = size - index - 1; // 需要移动到的下标
         if (numMoved > 0)
             System.arraycopy(elementData, index+1, elementData, index,
-                             numMoved);
-        elementData[--size] = null; // clear to let GC do its work
+                             numMoved);//通过  System.arraycopy 方法实现 后面元素移动
+        elementData[--size] = null; // clear to let GC do its work 明确让GC开展工作
 
         return oldValue;
     }
@@ -548,7 +548,7 @@ public class ArrayList<E> extends AbstractList<E>
 
     /**
      * Removes all of the elements from this list.  The list will
-     * be empty after this call returns.
+     * be empty after this call returns. 从此列表中删除所有元素。该调用返回后，该列表将为空
      */
     public void clear() {
         modCount++;
@@ -642,7 +642,7 @@ public class ArrayList<E> extends AbstractList<E>
         size = newSize;
     }
 
-    /**
+    /** 检查 下标的范围， 如果范围超出，就抛出 ArrayIndexOutOfBoundsException 异常
      * Checks if the given index is in range.  If not, throws an appropriate
      * runtime exception.  This method does *not* check if the index is
      * negative: It is always used immediately prior to an array access,
@@ -653,7 +653,7 @@ public class ArrayList<E> extends AbstractList<E>
             throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
     }
 
-    /**
+    /** add 方法和 addAll 方法使用的 校验下标 方法
      * A version of rangeCheck used by add and addAll.
      */
     private void rangeCheckForAdd(int index) {
@@ -835,11 +835,11 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * An optimized version of AbstractList.Itr
+     * An optimized version of AbstractList.Itr 是AbstractList.Itr的优化的版本
      */
     private class Itr implements Iterator<E> {
-        int cursor;       // index of next element to return
-        int lastRet = -1; // index of last element returned; -1 if no such
+        int cursor;       // index of next element to return 下一个要返回的元素的索引
+        int lastRet = -1; // index of last element returned; -1 if no such  返回的最后一个元素的索引 -1表示无元素
         int expectedModCount = modCount;
 
         public boolean hasNext() {
@@ -848,9 +848,9 @@ public class ArrayList<E> extends AbstractList<E>
 
         @SuppressWarnings("unchecked")
         public E next() {
-            checkForComodification();
+            checkForComodification(); //校验是否修改过
             int i = cursor;
-            if (i >= size)
+            if (i >= size) //如果下个元素 大于list的size，抛出异常
                 throw new NoSuchElementException();
             Object[] elementData = ArrayList.this.elementData;
             if (i >= elementData.length)

@@ -106,8 +106,8 @@ public interface Iterator<E> {
      *         action.accept(next());
      * }</pre>
      *
-     * @param action The action to be performed for each element
-     * @throws NullPointerException if the specified action is null
+     * @param action The action to be performed for each element 每个元素要执行的操作
+     * @throws NullPointerException if the specified action is null 如果指定的操作为null 抛出 NullPointerException
      * @since 1.8
      */
     default void forEachRemaining(Consumer<? super E> action) {

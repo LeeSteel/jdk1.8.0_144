@@ -78,7 +78,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
     /**
      * Appends the specified element to the end of this list (optional
-     * operation).
+     *      * operation). 将指定的元素追加到此列表的末尾
      *
      * <p>Lists that support this operation may place limitations on what
      * elements may be added to this list.  In particular, some
@@ -576,7 +576,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * The number of times this list has been <i>structurally modified</i>.
      * Structural modifications are those that change the size of the
      * list, or otherwise perturb it in such a fashion that iterations in
-     * progress may yield incorrect results.
+     * progress may yield incorrect results. 此列表被<i>结构修改</i>的次数。 结构性修改是指更改列表大小，或以其他方式干扰列表进行进度可能会产生不正确结果的方式。
      *
      * <p>This field is used by the iterator and list iterator implementation
      * returned by the {@code iterator} and {@code listIterator} methods.
