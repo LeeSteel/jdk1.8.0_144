@@ -114,14 +114,14 @@ public class ArrayList<E> extends AbstractList<E>
     private static final int DEFAULT_CAPACITY = 10;
 
     /**
-     * Shared empty array instance used for empty instances.
+     * Shared empty array instance used for empty instances. 用于空实例的共享空数组实例。
      */
     private static final Object[] EMPTY_ELEMENTDATA = {};
 
     /**
      * Shared empty array instance used for default sized empty instances. We
      * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when
-     * first element is added.
+     * first element is added. 共享的空数组实例，用于默认大小的空实例。我们将其与EMPTY_ELEMENTDATA区别开来，以了解添加第一个元素时需要充气多少。
      */
     private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
 
@@ -134,14 +134,14 @@ public class ArrayList<E> extends AbstractList<E>
     transient Object[] elementData; // non-private to simplify nested class access
 
     /**
-     * The size of the ArrayList (the number of elements it contains).
+     * The size of the ArrayList (the number of elements it contains). ArrayList的大小（它包含的元素数）。
      *
      * @serial
      */
     private int size;
 
     /**
-     * Constructs an empty list with the specified initial capacity.
+     * Constructs an empty list with the specified initial capacity. 构造一个具有指定初始容量的空列表。
      *
      * @param  initialCapacity  the initial capacity of the list 列表的初始容量
      * @throws IllegalArgumentException if the specified initial capacity
@@ -159,7 +159,7 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * Constructs an empty list with an initial capacity of ten.
+     * Constructs an empty list with an initial capacity of ten. 构造一个初始容量为10的空列表。
      */
     public ArrayList() {
         this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;

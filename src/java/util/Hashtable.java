@@ -132,25 +132,25 @@ public class Hashtable<K,V>
     implements Map<K,V>, Cloneable, java.io.Serializable {
 
     /**
-     * The hash table data.
+     * The hash table data. 哈希表数据。
      */
     private transient Entry<?,?>[] table;
 
     /**
-     * The total number of entries in the hash table.
+     * The total number of entries in the hash table. 哈希表中的条目总数。
      */
     private transient int count;
 
     /**
      * The table is rehashed when its size exceeds this threshold.  (The
-     * value of this field is (int)(capacity * loadFactor).)
+     * value of this field is (int)(capacity * loadFactor).) 当表的大小超过此阈值时，将对其进行重新哈希处理。 （此字段的*值为（int）（容量* loadFactor）。）
      *
      * @serial
      */
     private int threshold;
 
     /**
-     * The load factor for the hashtable.
+     * The load factor for the hashtable. 哈希表的加载因子。
      *
      * @serial
      */
@@ -383,29 +383,29 @@ public class Hashtable<K,V>
      * hashtable, in order to accommodate and access its entries more
      * efficiently.  This method is called automatically when the
      * number of keys in the hashtable exceeds this hashtable's capacity
-     * and load factor.  ���Ӵ˹�ϣ�������������ڲ��������飬�Ա����Ч�����ɺͷ�������Ŀ������ϣ���еļ��������ù�ϣ���������͸�������ʱ�����Զ����ô˷�����
+     * and load factor. 增加此哈希表的容量并在内部进行重组，以便更有效地容纳和访问其条目。当哈希表中的键数超过该哈希表的容量和负载因子时，将自动调用此方法。
      */
     @SuppressWarnings("unchecked")
     protected void rehash() {
-        int oldCapacity = table.length;
-        Entry<?,?>[] oldMap = table;
+        int oldCapacity = table.length; //旧容量
+        Entry<?,?>[] oldMap = table; //旧哈希表
 
-        // overflow-conscious code
+        // overflow-conscious code  可能会溢出的代码
         int newCapacity = (oldCapacity << 1) + 1;
-        if (newCapacity - MAX_ARRAY_SIZE > 0) {
-            if (oldCapacity == MAX_ARRAY_SIZE)
-                // Keep running with MAX_ARRAY_SIZE buckets
+        if (newCapacity - MAX_ARRAY_SIZE > 0) { //判断新容量 是否 大于最大容量
+            if (oldCapacity == MAX_ARRAY_SIZE)  //判断旧容量是否等于最大容量，如果已经为最大容量，不做扩容处理
+                // Keep running with MAX_ARRAY_SIZE buckets  继续使用MAX_ARRAY_SIZE个存储桶
                 return;
-            newCapacity = MAX_ARRAY_SIZE;
+            newCapacity = MAX_ARRAY_SIZE; //旧容量未大于最大容量，此处设置新容量为最大容量
         }
-        Entry<?,?>[] newMap = new Entry<?,?>[newCapacity];
+        Entry<?,?>[] newMap = new Entry<?,?>[newCapacity]; //新数组
 
-        modCount++;
-        threshold = (int)Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + 1);
-        table = newMap;
+        modCount++; //修改次数增加
+        threshold = (int)Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + 1); //数组阈值 增加
+        table = newMap; //把新数组赋予
 
-        for (int i = oldCapacity ; i-- > 0 ;) {
-            for (Entry<K,V> old = (Entry<K,V>)oldMap[i] ; old != null ; ) {
+        for (int i = oldCapacity ; i-- > 0 ;) { //循环旧数组，数据迁移到新数组中
+            for (Entry<K,V> old = (Entry<K,V>)oldMap[i] ; old != null ; ) { //每一个节点元素,遍历其链表节点上的每一个,进行迁移
                 Entry<K,V> e = old;
                 old = old.next;
 
@@ -421,7 +421,7 @@ public class Hashtable<K,V>
 
         Entry<?,?> tab[] = table;
         if (count >= threshold) {
-            // Rehash the table if the threshold is exceeded
+            // Rehash the table if the threshold is exceeded  如果超过了阈值，扩容
             rehash();
 
             tab = table;
@@ -448,32 +448,32 @@ public class Hashtable<K,V>
      * @param      value   the value
      * @return     the previous value of the specified key in this hashtable,
      *             or <code>null</code> if it did not have one
-     * @exception  NullPointerException  if the key or value is
+     * @exception  NullPointerException  if the key or value is  如果key 或者 value为空,抛出空指针异常
      *               <code>null</code>
      * @see     Object#equals(Object)
      * @see     #get(Object)
      */
     public synchronized V put(K key, V value) {
-        // Make sure the value is not null
+        // Make sure the value is not null 确保该值不为空
         if (value == null) {
             throw new NullPointerException();
         }
 
-        // Makes sure the key is not already in the hashtable.
+        // Makes sure the key is not already in the hashtable. 确保密钥尚未在哈希表中。
         Entry<?,?> tab[] = table;
-        int hash = key.hashCode();//��ȡkey �� hashCode
+        int hash = key.hashCode();// key的hashCode
         int index = (hash & 0x7FFFFFFF) % tab.length;
         @SuppressWarnings("unchecked")
         Entry<K,V> entry = (Entry<K,V>)tab[index];
-        for(; entry != null ; entry = entry.next) {
-            if ((entry.hash == hash) && entry.key.equals(key)) {
+        for(; entry != null ; entry = entry.next) { //遍历哈希数组
+            if ((entry.hash == hash) && entry.key.equals(key)) { //如果有hash相同的,并且 key 的equals 相等
                 V old = entry.value;
-                entry.value = value;
-                return old;
+                entry.value = value; //覆盖原有值
+                return old; //返回上个值
             }
         }
 
-        addEntry(hash, key, value, index);
+        addEntry(hash, key, value, index);//未有历史值，添加新元素
         return null;
     }
 
