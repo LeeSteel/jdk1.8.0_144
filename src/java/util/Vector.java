@@ -89,7 +89,7 @@ public class Vector<E>
      * stored. The capacity of the vector is the length of this array buffer,
      * and is at least large enough to contain all the vector's elements.
      *
-     * <p>Any array elements following the last element in the Vector are null.
+     * <p>Any array elements following the last element in the Vector are null. Vector中最后一个元素之后的任何数组元素均为null。
      *
      * @serial
      */
@@ -236,7 +236,7 @@ public class Vector<E>
      * This implements the unsynchronized semantics of ensureCapacity.
      * Synchronized methods in this class can internally call this
      * method for ensuring capacity without incurring the cost of an
-     * extra synchronization.
+     * extra synchronization. 这实现了 确保容量 的非同步语义。此类中的同步方法可以在内部调用此方法，以确保容量而不会产生额外同步的开销。
      *
      * @see #ensureCapacity(int)
      */

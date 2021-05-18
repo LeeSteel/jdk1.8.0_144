@@ -1740,15 +1740,15 @@ public final class String
     /**
      * Code shared by String and StringBuffer to do searches. The
      * source is the character array being searched, and the target
-     * is the string being searched for.
+     * is the string being searched for. String 和 StringBuffer共享的代码以进行搜索。  源是正在搜索的字符数组，目标 是正在搜索的字符串。
      *
-     * @param   source       the characters being searched.
-     * @param   sourceOffset offset of the source string.
-     * @param   sourceCount  count of the source string.
-     * @param   target       the characters being searched for.
-     * @param   targetOffset offset of the target string.
-     * @param   targetCount  count of the target string.
-     * @param   fromIndex    the index to begin searching from.
+     * @param   source       the characters being searched. 被搜索的字符。
+     * @param   sourceOffset offset of the source string. 源字符串的偏移量。
+     * @param   sourceCount  count of the source string. 源字符串的计数。
+     * @param   target       the characters being searched for. 要搜索的字符。
+     * @param   targetOffset offset of the target string. 目标字符串的偏移量。
+     * @param   targetCount  count of the target string. 目标字符串的计数。
+     * @param   fromIndex    the index to begin searching from. 开始搜索的索引。
      */
     static int indexOf(char[] source, int sourceOffset, int sourceCount,
             char[] target, int targetOffset, int targetCount,
@@ -1764,22 +1764,22 @@ public final class String
         }
 
         char first = target[targetOffset];
-        int max = sourceOffset + (sourceCount - targetCount);
+        int max = sourceOffset + (sourceCount - targetCount); //根据 源串偏移量 以及 源串和目标串的差，得到 向右最大偏移量，比如说源串10个长度，目标串6个长度，那么向右最大偏移量就为4，超过4长度就不够了
 
         for (int i = sourceOffset + fromIndex; i <= max; i++) {
             /* Look for first character. */
-            if (source[i] != first) {
+            if (source[i] != first) { //找到字符串的第一个元素
                 while (++i <= max && source[i] != first);
             }
 
-            /* Found first character, now look at the rest of v2 */
-            if (i <= max) {
-                int j = i + 1;
-                int end = j + targetCount - 1;
-                for (int k = targetOffset + 1; j < end && source[j]
+            /* Found first character, now look at the rest of v2  找到第一个字符，现在看看v2的其余部分 */
+            if (i <= max) { //如果未超过向右最大偏移量
+                int j = i + 1; //临时开始下标
+                int end = j + targetCount - 1; //临时结束下标
+                for (int k = targetOffset + 1; j < end && source[j] //遍历每个元素，匹配是否一致
                         == target[k]; j++, k++);
 
-                if (j == end) {
+                if (j == end) { //如果 j 和 临时结束下标 相等，说明全都匹配，返回 当前下标
                     /* Found whole string. */
                     return i - sourceOffset;
                 }
