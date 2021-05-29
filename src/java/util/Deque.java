@@ -199,7 +199,7 @@ public interface Deque<E> extends Queue<E> {
      * preferable to use method {@link #offerFirst}.
      *
      * @param e the element to add
-     * @throws IllegalStateException if the element cannot be added at this
+     * @throws IllegalStateException if the element cannot  be added at this
      *         time due to capacity restrictions
      * @throws ClassCastException if the class of the specified element
      *         prevents it from being added to this deque

@@ -199,18 +199,18 @@ public class LinkedHashMap<K,V>
     private static final long serialVersionUID = 3801124242820219131L;
 
     /**
-     * The head (eldest) of the doubly linked list.
+     * The head (eldest) of the doubly linked list. 双链表中的头（老大）。
      */
     transient LinkedHashMap.Entry<K,V> head;
 
     /**
-     * The tail (youngest) of the doubly linked list.
+     * The tail (youngest) of the doubly linked list. 双链表的尾部（最小的）。
      */
     transient LinkedHashMap.Entry<K,V> tail;
 
     /**
-     * The iteration ordering method for this linked hash map: <tt>true</tt>
-     * for access-order, <tt>false</tt> for insertion-order.
+     * The iteration ordering method for this linked hash map: <tt>true</tt> 这个链式散列映射的迭代排序方法
+     * for access-order, <tt>false</tt> for insertion-order.  true 访问有序，false 插入有序
      *
      * @serial
      */
@@ -302,13 +302,13 @@ public class LinkedHashMap<K,V>
         }
     }
 
-    void afterNodeAccess(Node<K,V> e) { // move node to last
+    void afterNodeAccess(Node<K,V> e) { // move node to last 移动节点到最后
         LinkedHashMap.Entry<K,V> last;
-        if (accessOrder && (last = tail) != e) {
+        if (accessOrder && (last = tail) != e) { //如果为访问有序,并且当前节点不为链表尾节点
             LinkedHashMap.Entry<K,V> p =
                 (LinkedHashMap.Entry<K,V>)e, b = p.before, a = p.after;
             p.after = null;
-            if (b == null)
+            if (b == null) //如果当前节点前置节点为空，当前节点就为头节点
                 head = a;
             else
                 b.after = a;
@@ -318,11 +318,11 @@ public class LinkedHashMap<K,V>
                 last = b;
             if (last == null)
                 head = p;
-            else {
+            else { //如果 尾节点不为空，把当前元素P添加到 尾节点之后
                 p.before = last;
                 last.after = p;
             }
-            tail = p;
+            tail = p;  //把P节点 设置为 尾节点
             ++modCount;
         }
     }

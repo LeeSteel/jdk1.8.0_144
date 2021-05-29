@@ -144,8 +144,8 @@ public class HashSet<E>
         map = new HashMap<>(initialCapacity);
     }
 
-    /**
-     * Constructs a new, empty linked hash set.  (This package private
+    /** 创建一个 有序的HashSet,底层实现为 LinkedHashMap
+     * Constructs a new, empty linked hash set.  (This package private 此包私有构造函数仅由LinkedHashSet使用。
      * constructor is only used by LinkedHashSet.) The backing
      * HashMap instance is a LinkedHashMap with the specified initial
      * capacity and the specified load factor.

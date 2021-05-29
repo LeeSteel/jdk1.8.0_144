@@ -205,7 +205,7 @@ public class Hashtable<K,V>
 
     /**
      * Constructs a new, empty hashtable with a default initial capacity (11)
-     * and load factor (0.75).
+     * and load factor (0.75). 构造一个新的空哈希表，其默认初始容量（11） 和负载因子（0.75）。
      */
     public Hashtable() {
         this(11, 0.75f);

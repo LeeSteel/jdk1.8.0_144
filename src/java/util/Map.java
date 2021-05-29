@@ -134,7 +134,7 @@ public interface Map<K,V> {
      * map contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
      * <tt>Integer.MAX_VALUE</tt>.
      *
-     * @return the number of key-value mappings in this map
+     * @return the numbe of key-value mappings in this map
      */
     int size();
 

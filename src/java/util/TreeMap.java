@@ -44,7 +44,7 @@ import java.util.function.Consumer;
  * <p>Note that the ordering maintained by a tree map, like any sorted map, and
  * whether or not an explicit comparator is provided, must be <em>consistent
  * with {@code equals}</em> if this sorted map is to correctly implement the
- * {@code Map} interface.  (See {@code Comparable} or {@code Comparator} for a
+ * {@code Map} interface.  (See {@code Comparable} or {@code Comparator} for a 
  * precise definition of <em>consistent with equals</em>.)  This is so because
  * the {@code Map} interface is defined in terms of the {@code equals}
  * operation, but a sorted map performs all key comparisons using its {@code
