@@ -135,22 +135,22 @@ public class LinkedList<E>
     }
 
     /**
-     * Links e as last element.
+     * Links e as last element. 链接 e 作为最后一个元素
      */
     void linkLast(E e) {
         final Node<E> l = last;
         final Node<E> newNode = new Node<>(l, e, null);
-        last = newNode;
-        if (l == null)
+        last = newNode;  //新元素设置为尾节点
+        if (l == null) //如果尾元素为空，新节点就为头节点
             first = newNode;
-        else
+        else  //如果尾元素非空，上节点的下一节点就为尾节点
             l.next = newNode;
         size++;
         modCount++;
     }
 
     /**
-     * Inserts element e before non-null Node succ.
+     * Inserts element e before non-null Node succ.在非空 Node succ 之前插入元素 e。
      */
     void linkBefore(E e, Node<E> succ) {
         // assert succ != null;
@@ -166,7 +166,7 @@ public class LinkedList<E>
     }
 
     /**
-     * Unlinks non-null first node f.
+     * Unlinks non-null first node f. 取消链接非空的第一个节点 f
      */
     private E unlinkFirst(Node<E> f) {
         // assert f == first && f != null;
@@ -327,7 +327,7 @@ public class LinkedList<E>
     }
 
     /**
-     * Appends the specified element to the end of this list.
+     * Appends the specified element to the end of this list. 将指定的元素附加到此列表的末尾。
      *
      * <p>This method is equivalent to {@link #addLast}.
      *

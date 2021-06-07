@@ -30,7 +30,7 @@ package java.util;
  * they support fast (generally constant time) random access.  The primary
  * purpose of this interface is to allow generic algorithms to alter their
  * behavior to provide good performance when applied to either random or
- * sequential access lists.
+ * sequential access lists.  List实现使用的标记接口来指示它们支持快速（通常是恒定时间）随机访问。这个接口的主要目的是允许通用算法改变它们的行为，以便在应用于随机或顺序访问列表时提供良好的性能。
  *
  * <p>The best algorithms for manipulating random access lists (such as
  * <tt>ArrayList</tt>) can produce quadratic behavior when applied to

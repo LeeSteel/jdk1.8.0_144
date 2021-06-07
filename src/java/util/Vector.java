@@ -241,16 +241,16 @@ public class Vector<E>
      * @see #ensureCapacity(int)
      */
     private void ensureCapacityHelper(int minCapacity) {
-        // overflow-conscious code
+        // overflow-conscious code 可能会溢出的代码
         if (minCapacity - elementData.length > 0)
             grow(minCapacity);
     }
 
     /**
-     * The maximum size of array to allocate.
-     * Some VMs reserve some header words in an array.
-     * Attempts to allocate larger arrays may result in
-     * OutOfMemoryError: Requested array size exceeds VM limit
+     * The maximum size of array to allocate. 要分配的数组的最大大小。
+     * Some VMs reserve some header words in an array. 一些 VM 在数组中保留一些头字。
+     * Attempts to allocate larger arrays may result in 尝试分配更大的数组可能会导致  OutOfMemoryError
+     * OutOfMemoryError: Requested array size exceeds VM limit 请求的阵列大小超过 VM 限制
      */
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
@@ -259,10 +259,10 @@ public class Vector<E>
         int oldCapacity = elementData.length;
         int newCapacity = oldCapacity + ((capacityIncrement > 0) ?
                                          capacityIncrement : oldCapacity);
-        if (newCapacity - minCapacity < 0)
-            newCapacity = minCapacity;
-        if (newCapacity - MAX_ARRAY_SIZE > 0)
-            newCapacity = hugeCapacity(minCapacity);
+        if (newCapacity - minCapacity < 0) //如果新容量超过了int的最大值(为负)，或者低于最低容量
+            newCapacity = minCapacity; //新容量等于最低容量
+        if (newCapacity - MAX_ARRAY_SIZE > 0) //如果新容量大于最大容量
+            newCapacity = hugeCapacity(minCapacity); //新容量设置为 巨大的容量
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
 
@@ -771,15 +771,15 @@ public class Vector<E>
     }
 
     /**
-     * Appends the specified element to the end of this Vector.
+     * Appends the specified element to the end of this Vector. 将指定的元素附加到此 Vector 的末尾。
      *
-     * @param e element to be appended to this Vector
+     * @param e element to be appended to this Vector 要附加到此 Vector 的元素
      * @return {@code true} (as specified by {@link Collection#add})
      * @since 1.2
      */
     public synchronized boolean add(E e) {
         modCount++;
-        ensureCapacityHelper(elementCount + 1);
+        ensureCapacityHelper(elementCount + 1);//确保容量助手
         elementData[elementCount++] = e;
         return true;
     }

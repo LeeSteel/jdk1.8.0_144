@@ -30,14 +30,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A facility for threads to schedule tasks for future execution in a
  * background thread.  Tasks may be scheduled for one-time execution, or for
- * repeated execution at regular intervals.
+ * repeated execution at regular intervals. 用于线程安排任务以供将来在后台线程中执行的工具。任务可能被安排为一次性执行，或者定期重复执行。
  *
- * <p>Corresponding to each <tt>Timer</tt> object is a single background
- * thread that is used to execute all of the timer's tasks, sequentially.
- * Timer tasks should complete quickly.  If a timer task takes excessive time
- * to complete, it "hogs" the timer's task execution thread.  This can, in
+ * <p>Corresponding to each <tt>Timer</tt> object is a single background  对应于每个<tt>Timer</tt> 对象的是一个单独的后台线程
+ * thread that is used to execute all of the timer's tasks, sequentially. ，用于按顺序执行定时器的所有任务。
+ * Timer tasks should complete quickly.  If a timer task takes excessive time 计时器任务应该很快完成。如果一个计时器任务花费过多的时间 来完成
+ * to complete, it "hogs" the timer's task execution thread.  This can, in 它会“占用”计时器的任务执行线程。这反过来又会延迟后续任务的执行
  * turn, delay the execution of subsequent tasks, which may "bunch up" and
- * execute in rapid succession when (and if) the offending task finally
+ * execute in rapid succession when (and if) the offending task finally 这些任务可能会在（以及如果）有问题的任务最终完成时“聚集”并快速连续执行。
  * completes.
  *
  * <p>After the last live reference to a <tt>Timer</tt> object goes away
