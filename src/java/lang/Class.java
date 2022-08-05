@@ -1291,8 +1291,8 @@ public final class Class<T> implements java.io.Serializable,
     }
 
     /**
-     * Returns the simple name of the underlying class as given in the
-     * source code. Returns an empty string if the underlying class is
+     * Returns the simple name of the underlying class as given in the  返回源代码中给出的基础类的简单名称。
+     * source code. Returns an empty string if the underlying class is  如果基础类是匿名的，则返回一个空字符串。
      * anonymous.
      *
      * <p>The simple name of an array is the simple name of the
@@ -1336,7 +1336,7 @@ public final class Class<T> implements java.io.Serializable,
     }
 
     /**
-     * Return an informative string for the name of this type.
+     * Return an informative string for the name of this type.  返回此类型名称的信息字符串。
      *
      * @return an informative string for the name of this type
      * @since 1.8
